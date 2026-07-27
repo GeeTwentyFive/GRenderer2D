@@ -1,0 +1,1 @@
+g++ -O2 -march=x86-64-v2 -mwindows -I ../libs/windows ../_EXAMPLE.cpp ../libs/windows/GWindower_OpenGL/libgwindower_opengl.a ../../build/libgrenderer2d.a -lgdi32 -o Example.exe
