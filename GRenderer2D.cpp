@@ -30,7 +30,7 @@ const static float QUAD_VERTICES[] = {
 };
 const GLchar* VERTEX_SHADER = {"#version 460 core\n"
         "layout (location = 0) in vec4 vertex;"  // .xy = position, .zw = uv
-        "uniform mat4 projection;"
+        "uniform mat4 viewProjection;"
         "layout(binding = 0, std430) readonly buffer ssboVertexInstanceInput {"
                 "mat4 modelMatrices[];"
         "};"
@@ -39,7 +39,7 @@ const GLchar* VERTEX_SHADER = {"#version 460 core\n"
         "flat out int frag_InstanceID;"
 
         "void main() {" "frag_uv = vertex.zw;" "frag_InstanceID = gl_InstanceID;"
-                "gl_Position = projection * modelMatrices[gl_InstanceID] * vec4(vertex.xy, 0.0f, 1.0f);"
+                "gl_Position = viewProjection * modelMatrices[gl_InstanceID] * vec4(vertex.xy, 0.0f, 1.0f);"
         "}"
 ""};
 const GLchar* FRAGMENT_SHADER = {"#version 460 core\n"
@@ -64,7 +64,7 @@ struct GRenderer2D::_impl { uint64_t _last_uid = 0; uint64_t NewUID() { return _
 
         GLuint shader_id; GLuint sprite_vao;
         float4x4 ortho_projection;
-        GLint shader_projection_location;
+        GLint shader_viewProjection_location;
         std::unordered_map<uint64_t, GLuint> sprites;
 
         GLuint ssbo_vertex_instance_input_id; std::vector<float4x4> instance_model_matrices;
@@ -99,7 +99,7 @@ GRenderer2D::GRenderer2D(uint32_t window_width, uint32_t window_height) { this->
                 {-1.0f, -1.0f,  0,      1.0f}
         };
 
-        this->_->shader_projection_location = glGetUniformLocation(this->_->shader_id, "projection");
+        this->_->shader_viewProjection_location = glGetUniformLocation(this->_->shader_id, "viewProjection");
 
         glCreateBuffers(1, &this->_->ssbo_vertex_instance_input_id);
         glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, this->_->ssbo_vertex_instance_input_id);
@@ -128,9 +128,16 @@ uint64_t GRenderer2D::CreateSprite(
 int GRenderer2D::DrawFrame() noexcept { GLboolean _prev_depth_enabled = glIsEnabled(GL_DEPTH_TEST); glDisable(GL_DEPTH_TEST);
         glUseProgram(this->_->shader_id);
 
+        float4x4 viewProjection = linalg::mul(
+                linalg::mul(
+                        linalg::translation_matrix(float3{-this->camera_pos[0], -this->camera_pos[1], 0.0}),
+                        linalg::scaling_matrix(float3{this->camera_zoom, this->camera_zoom, 1.0})
+                ),
+                this->_->ortho_projection
+        );
         glUniformMatrix4fv(
-                this->_->shader_projection_location, 1, GL_FALSE,
-                (const GLfloat*)&this->_->ortho_projection
+                this->_->shader_viewProjection_location, 1, GL_FALSE,
+                (const GLfloat*)&viewProjection
         );
 
         // Draw sprites

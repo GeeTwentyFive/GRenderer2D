@@ -11,6 +11,8 @@ Minimalistic simple cross-platform 2D renderer
 
 # API
 
+- `.camera_pos` - Set/Get camera position
+- `.camera_zoom` - Set/Get camera zoom
 - `.CreateSprite()` - Write sprite to GPU
 - `.AddSprite()` - Create instance of sprite created with `.CreateSprite()`
 - ##### AT END OF FRAME: `.DrawFrame()`  (returns 0 on success, source line number on error)

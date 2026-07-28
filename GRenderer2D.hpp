@@ -12,6 +12,9 @@ class GRenderer2D { private: struct _impl; std::unique_ptr<_impl> _; public: str
 public:
         explicit GRenderer2D(uint32_t window_width, uint32_t window_height);
 
+        float camera_pos[2] = {0, 0};  // in Normalized Device Coordinates (-1 - 1)
+        float camera_zoom = 1.0;
+
         uint64_t CreateSprite( // returns sprite ID
                 const uint32_t* texture_RGBA, const uint16_t texture_width, const uint16_t texture_height
         );

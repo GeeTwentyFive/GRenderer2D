@@ -35,11 +35,20 @@ int main() { try {
         sprite_instance->size[0] = gwgl.screen_height/8; sprite_instance->size[1] = gwgl.screen_height/8;
         sprite_instance->position[0] = gwgl.screen_width/2 - sprite_instance->size[0]/2; sprite_instance->position[1] = gwgl.screen_height/2 - sprite_instance->size[1]/2;
 
+        static const uint32_t BG_TEXTURE[] = {0xFFFFFFFF};
+        GRenderer2D::SpriteInstance* bg = gr2d.AddSprite(gr2d.CreateSprite(BG_TEXTURE, 1, 1));
+        bg->size[0] = gwgl.screen_height/2; bg->size[1] = gwgl.screen_height/2;
+        bg->position[0] = gwgl.screen_width/2 - sprite_instance->size[0]/2; bg->position[1] = gwgl.screen_height/2 - sprite_instance->size[1]/2;
+        bg->z_depth = -0.99f;
+
         GFramePacer gfp; gfp.target_frametime_ms = TARGET_FRAMETIME_MS;
         while (gwgl.Update()) { if(gwgl.key_states[GW_KEY_ESCAPE]) break;
                 double delta_time = gfp.Wait();
 
                 glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+                gr2d.camera_pos[0] += ((float)gwgl.mouse_x_delta)/gwgl.screen_width;
+                gr2d.camera_pos[1] -= ((float)gwgl.mouse_y_delta)/gwgl.screen_height;
 
                 if (gwgl.key_states[GW_KEY_D]) sprite_instance->position[0] += delta_time * (float)gwgl.screen_height;
                 if (gwgl.key_states[GW_KEY_A]) sprite_instance->position[0] -= delta_time * (float)gwgl.screen_height;
