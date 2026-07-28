@@ -39,7 +39,7 @@ int main() { try {
         while (gwgl.Update()) { if(gwgl.key_states[GW_KEY_ESCAPE]) break;
                 double delta_time = gfp.Wait();
 
-                glClear(GL_COLOR_BUFFER_BIT);
+                glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
                 if (gwgl.key_states[GW_KEY_D]) sprite_instance->position[0] += delta_time * (float)gwgl.screen_height;
                 if (gwgl.key_states[GW_KEY_A]) sprite_instance->position[0] -= delta_time * (float)gwgl.screen_height;
