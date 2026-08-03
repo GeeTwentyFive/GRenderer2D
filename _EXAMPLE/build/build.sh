@@ -1,1 +1,1 @@
-g++ -O2 -march=x86-64-v2 -I ../libs/linux ../_EXAMPLE.cpp ../libs/linux/GWindower_OpenGL/libgwindower_opengl.a ../../build/libgrenderer2d.a -lGL -o Example
+g++ -O2 -march=x86-64-v2 -I ../libs/linux ../_EXAMPLE.cpp ../libs/linux/GWindower_OpenGL/libgwindower_opengl.a ../../build/libGRenderer2D_linux.a -lGL -o Example
